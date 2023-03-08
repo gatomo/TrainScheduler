@@ -1,0 +1,46 @@
+﻿<Window x:Class="DepartureTimeEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DepartureTimeEditor"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="8*"/>
+        </Grid.RowDefinitions>
+        <TextBox HorizontalAlignment="Stretch" Margin="5,5,5,5" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Stretch" Grid.Row="0" x:Name="dptText" AcceptsReturn="True"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" >
+            <Button x:Name="ToListView" Content="▼" HorizontalAlignment="Center" Margin="5,5,5,5" VerticalAlignment="Stretch" Width="300" Click="Button_Click"/>
+            <Button x:Name="ToString" Content="▲" HorizontalAlignment="Center" Margin="5,5,5,5" VerticalAlignment="Stretch" Width="300" Click="ToString_Click"/>
+        </StackPanel>
+        <Grid Grid.Row="2" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400*"/>
+                <ColumnDefinition Width="11*"/>
+                <ColumnDefinition Width="389*"/>
+            </Grid.ColumnDefinitions>
+            <ListView x:Name="DeparturesList" Grid.Column="0" ItemsSource="{Binding}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Time}" Width="350"></TextBox>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <TextBox Grid.Column="1" x:Name="span" VerticalAlignment="Top" Margin="5,5,5,5" Grid.ColumnSpan="2"/>
+            <Button x:Name="Move" Content="Move" Grid.Column="2" Width="300" Click="Move_Click" Margin="0,96,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Button x:Name="Copy" Content="Copy and Move" Margin="0,0,0,10" Grid.Column="2" Width="300" Click="Copy_Click" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        </Grid>
+
+
+    </Grid>
+</Window>
