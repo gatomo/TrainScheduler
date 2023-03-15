@@ -14,6 +14,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimetableEditor", "Timetabl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DepartureTimeEditor", "DepartureTimeEditor\DepartureTimeEditor.csproj", "{F92E95D9-2464-4E40-A40C-1FDE4C837C23}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Editor", "Editor", "{066846AC-5DBE-40C4-9E41-FDD7EFF1C81D}"
+	ProjectSection(SolutionItems) = preProject
+		Editor\favicon.png = Editor\favicon.png
+		Editor\TrainSchedulerEditor.css = Editor\TrainSchedulerEditor.css
+		Editor\TrainSchedulerEditor.html = Editor\TrainSchedulerEditor.html
+		Editor\TrainSchedulerEditor.js = Editor\TrainSchedulerEditor.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +43,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{066846AC-5DBE-40C4-9E41-FDD7EFF1C81D} = {B5DC3701-4926-4348-AECB-700ECC6FA8C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C73EBF9-5076-4E5F-ACA2-C3D38654C8B2}

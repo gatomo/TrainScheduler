@@ -1,0 +1,113 @@
+﻿.drop-area {
+  border: 3px dashed #C8C8C8 !important;
+  background-color: #F0F0F0 !important;
+  border-radius: 5px;
+  padding: 30px;
+  text-align: center;
+}
+.drop-area label {
+  width: 100%;
+  display: inline-block;
+}
+.drop-area label:hover {
+  cursor: pointer;
+}
+.drop-area label input {
+  display: none;
+}
+.drop-area label svg {
+  width: 50px;
+  fill: currentColor;
+  color: #909090;
+}
+.drop-area label .preview-area {
+  width: 75%;
+  margin: 15px auto;
+  height: 120px;
+}
+.drop-area label .preview-area img {
+  height: 100%;
+  max-width: 100%;
+  width: auto;
+}
+
+.accordion_inner_one {
+    margin: 0px 0px 0px 20px;
+}
+
+.accordion_header_one {
+    font-weight: bold;
+    background-color: darkorange;
+    color: white;
+    padding-left: 1.0em;
+    margin-top: 0.3em;
+}
+
+.accordion_header_two {
+    font-weight: bold;
+    background-color: lightseagreen;
+    color: white;
+    padding-left: 1.0em;
+    margin-top: 0.3em;
+}
+
+.accordion_inner_two {
+    margin: 0px 0px 0px 40px;
+}
+
+.dept-table {
+    border: solid;
+}
+
+.box_one {
+    display: flex;
+}
+
+.box_one_column {
+    display: flex;
+    flex-flow: column;
+    padding-left: 1.0em;
+    justify-content: space-between;
+}
+
+.box_buttons {
+    display: flex;
+    padding-left: 1.0em;
+    justify-content: space-between;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+    table td {
+        padding: 0.25em;
+        border: 0;
+    }
+
+        table td input[type="text"] {
+            width: calc(100% - 40px);
+            box-sizing: border-box;
+            padding: 5px;
+            margin: 0px 20px 0px 20px;
+            border: 1px solid black;
+        }
+
+tr.selected {
+    background-color: lightblue;
+}
+
+button.save {
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    position: relative;
+    width: auto;
+    margin: auto;
+    padding: 1.0rem 1.0rem;
+    font-weight: bold;
+    border-radius: 0.3rem;
+    background: #27acd9;
+    color: #fff;
+}
