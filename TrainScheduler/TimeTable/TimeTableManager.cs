@@ -86,7 +86,9 @@ namespace TrainScheduler.TimeTable
         {
             if (!File.Exists(filePath))
             {
-                throw new Exception("File is not found");
+                // 時刻表がないと動かしたときにエラーになる。これを回避するため、存在しない場合は、CreateTemplateで現在のマップ情報から作ってしまう。
+                //throw new Exception("File is not found");
+                CreateTemplate(filePath);
             }
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(filePath))
