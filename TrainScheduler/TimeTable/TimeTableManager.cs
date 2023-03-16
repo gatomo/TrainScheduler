@@ -211,10 +211,13 @@ namespace TrainScheduler.TimeTable
             // ここから駅ごとに異なる発車時間の設定を時刻表に落とし込む
             try
             {
-                string nextStationBuilding = Utility.GetNextStationBuildinIdByVehicle(ref vehicleData, vehicleId).ToString(); 
-                string currentStationBuilding = Utility.GetCurrentStationBuildingIdByVehicle(ref vehicleData, vehicleId).ToString();
+                var nextNode = Utility.GetNextStationNodeId(ref vehicleData, vehicleId).ToString();
+                var index = lineData.Stops.FindIndex(item => item.NextId == nextNode);
 
-                var index = lineData.Stops.FindIndex(item => item.Id == currentStationBuilding && item.NextId == nextStationBuilding);
+                //string nextStationBuilding = Utility.GetNextStationBuildinIdByVehicle(ref vehicleData, vehicleId).ToString(); 
+                //string currentStationBuilding = Utility.GetCurrentStationBuildingIdByVehicle(ref vehicleData, vehicleId).ToString();
+
+                //var index = lineData.Stops.FindIndex(item => item.Id == currentStationBuilding && item.NextId == nextStationBuilding);
 
                 return lineData.Stops[index].Departures;
             }
@@ -319,9 +322,11 @@ namespace TrainScheduler.TimeTable
                             line.Stops.Add(new StopRecord
                             {
                                 Index = Convert.ToString(stopIndex),
-                                Id = Convert.ToString(currentStationBuilding),
+                                Id = Convert.ToString(stopNetId),
+                                //Id = Convert.ToString(currentStationBuilding),
                                 Name = currentStationName,
-                                NextId = Convert.ToString(nextStationBuilding),
+                                NextId = Convert.ToString(nextNetId),
+                                //NextId = Convert.ToString(nextStationBuilding),
                                 NextName = nextStationName,
                                 Mode = "Indivisually",
                                 Interval = "0",

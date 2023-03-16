@@ -16,16 +16,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=1420955187&searchtext=Rea
 Improved Public Transport 2
 
 ## 使い方
-1. zipを以下のフォルダに展開します  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler 
-展開後のイメージ  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\TrainScheduler.dll  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\CitiesHarmony.API.dll  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\TimeTables.xml  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\readme.md  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\DepartureTimeEditor.exe  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\DepartureTimeEditor.pdb  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\Resources\mod-icon.png  
+1. ワークショップからサブスクライブします  
 
 2. コンテンツマネージャーからMODを有効化します  
 TrainScheduler 0.x.x
@@ -119,3 +110,15 @@ XML内の構造はこのような形です。
 
 ## 制限事項  
 * ゲーム内から時刻表を設定できない（今後対応したい）
+
+
+## Change Log
+### [2.2.3] 2023-03-15
+- Station Trackを利用した際に駅舎Id、次駅Idが0になる場合があり正常に制御されない問題に対処するため、時刻表ファイルに出力されるこれらの値をネットワーク番号に変更しました。これにより全てのマップで時刻表の再設定が必要になります。
+### [2.2.2] 2023-03-15
+- TimeTables.xmlがない場合でも、開いたマップに応じた設定ファイルを自動で出力するように変更しました。これにより、設定ファイルがない状態で時間をすすめる際に発生していたエラーがなくなります。
+- ウェブ上で動作する時刻表エディターをリリースしました。メモ帳等のエディターよりもパターンダイヤの作成が楽になります。https://gatomo.github.io/TrainSchedulerEditor/
+### [2.2.1] 2023-03-08
+- ソースコード公開に向けた修正
+### [2.2.0] 2023-03-08
+- 初版公開
