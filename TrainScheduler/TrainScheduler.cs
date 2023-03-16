@@ -14,7 +14,7 @@ namespace TrainScheduler
 {
     public class TrainScheduler : LoadingExtensionBase, IUserMod
     {
-        public string version = "0.3.0-alpha";
+        public string version = "0.2.3-alpha";
 
         public string Name => $"TrainScheduler v{version}";
 
