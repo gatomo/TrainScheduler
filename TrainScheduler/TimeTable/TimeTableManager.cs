@@ -312,12 +312,40 @@ namespace TrainScheduler.TimeTable
                         for (int stopIndex = 0; stopIndex < lineInfo.CountStops((ushort)lineIndex); stopIndex++)
                         {
                             // stopIndex番目の駅を取得する
-                            ushort currentStationBuilding = Utility.GetNearestStationBuildingIdByNode(stopNetId);
-                            string currentStationName = Utility.GetBuildingName(currentStationBuilding);
+                            string currentStationName = InstanceManager.instance.GetName(new InstanceID { NetNode = stopNetId });
+                            if (string.IsNullOrEmpty(currentStationName))
+                            {
+                                ushort currentStationBuilding = Utility.GetNearestStationBuildingIdByNode(stopNetId);
+                                currentStationName = Utility.GetBuildingName(currentStationBuilding);
+                            }
+                            if (string.IsNullOrEmpty(currentStationName))
+                            {
+                                currentStationName = NetManager.instance.GetSegmentName(stopNetId);
+                            }
+                            if (string.IsNullOrEmpty(currentStationName))
+                            {
+                                ref NetNode currentNode = ref NetManager.instance.m_nodes.m_buffer[stopNetId];
+                                ref NetLane currentLane = ref NetManager.instance.m_lanes.m_buffer[currentNode.m_lane];
+                                currentStationName = NetManager.instance.GetSegmentName(currentLane.m_segment);
+                            }
 
                             var nextNetId = TransportLine.GetNextStop(stopNetId);
-                            ushort nextStationBuilding = Utility.GetNearestStationBuildingIdByNode(nextNetId);
-                            string nextStationName = Utility.GetBuildingName(nextStationBuilding);
+                            string nextStationName = InstanceManager.instance.GetName(new InstanceID { NetNode = nextNetId }); 
+                            if (string.IsNullOrEmpty(nextStationName))
+                            {
+                                ushort nextStationBuilding = Utility.GetNearestStationBuildingIdByNode(nextNetId);
+                                nextStationName = Utility.GetBuildingName(nextStationBuilding);
+                            }
+                            if (string.IsNullOrEmpty(nextStationName))
+                            {
+                                nextStationName = NetManager.instance.GetSegmentName(nextNetId);
+                            }
+                            if (string.IsNullOrEmpty(nextStationName))
+                            {
+                                ref NetNode nextNode = ref NetManager.instance.m_nodes.m_buffer[nextNetId];
+                                ref NetLane nextLane = ref NetManager.instance.m_lanes.m_buffer[nextNode.m_lane];
+                                nextStationName = NetManager.instance.GetSegmentName(nextLane.m_segment);
+                            }
 
                             line.Stops.Add(new StopRecord
                             {

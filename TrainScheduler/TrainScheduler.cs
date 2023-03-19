@@ -14,11 +14,11 @@ namespace TrainScheduler
 {
     public class TrainScheduler : LoadingExtensionBase, IUserMod
     {
-        public string version = "0.2.3-alpha";
+        public string version = "0.2.4-alpha";
 
         public string Name => $"TrainScheduler v{version}";
 
-        public string Description => "Train Leaving on specific time";
+        public string Description => "Trains leave on specific time";
 
         #region Lifecycle
 
