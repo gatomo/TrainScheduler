@@ -84,6 +84,14 @@ namespace TrainScheduler
                 TimeTableManager.Init();
             });
 
+            group.AddButton("Update Setting File", () =>
+            {
+
+                //string file = Path.Combine(DataLocation.modsPath, @"TrainScheduler\TimeTables_Template.xml");
+                string file = @"TimeTables.xml";
+                TimeTableManager.UpdateTimeTableFile(file);
+            });
+
             group.AddButton("Create Template", () =>
             {
 
