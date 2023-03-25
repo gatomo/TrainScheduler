@@ -5,6 +5,7 @@ using ColossalFramework.UI;
 using ICities;
 using System;
 using System.IO;
+using System.Windows.Forms;
 using TrainScheduler.Patches;
 using TrainScheduler.TimeTable;
 using UnifiedUI.Helpers;
@@ -43,6 +44,7 @@ namespace TrainScheduler
             }
             try
             {
+                TrainSchedulerSettings.Init();
                 TimeTableManager.Init();
 
                 // Add UUI button.
@@ -59,6 +61,7 @@ namespace TrainScheduler
         public override void OnLevelUnloading()
         {
             TimeTableManager.Deinit();
+            TrainSchedulerSettings.Deinit();
             base.OnLevelUnloading();
         }
 
@@ -77,28 +80,61 @@ namespace TrainScheduler
         public void OnSettingsUI(UIHelper helper)
         {
 
-            UIHelperBase group = helper.AddGroup("TrainScheduler Options");
+            UIHelper group = helper.AddGroup("Train Scheduler Options") as UIHelper;
+            UIPanel panel = group.self as UIPanel;
+
+            // TimeTables.xmlの表示
+            string timetablePathStr = Path.Combine(TrainSchedulerSettings.CurrentSaveRecord.TimetablePath, TrainSchedulerSettings.CurrentSaveRecord.TimetableFileName);
+            string templatePathStr = Path.Combine(TrainSchedulerSettings.CurrentSaveRecord.TimetablePath, "TimeTables_Template.xml");
+
+            //group.AddButton("Create Template", () => TimeTableManager.CreateTemplate(templatePathStr));
+            group.AddSpace(5);
+            // 1.0.0あたりにはこちらのアプリケーションフォルダの方を使うかも
+            UITextField timetableFilePath = (UITextField)group.AddTextfield("Timetable file:", TrainSchedulerSettings.CurrentSaveRecord.TimetableFileName, _ => { }, _ => { });
+            timetableFilePath.width = panel.width - 30;
+            group.AddButton("Show in File Explorer", () => System.Diagnostics.Process.Start("explorer.exe", "/select," + DataLocation.executableDirectory));
+
+            Debug.Log("Reload Timetable");
             group.AddButton("Reload Timetable", () =>
             {
-                TimeTableManager.Deinit();
-                TimeTableManager.Init();
-            });
+                var fileName = timetableFilePath.text;
+                Debug.Log("timetableFilePath.text: " + fileName);
+                if (!string.IsNullOrEmpty(fileName) && fileName.EndsWith(".xml"))
+                {
+                    Debug.Log("TraomScheduler Line104");
+                    TrainSchedulerSettings.CurrentSaveRecord.TimetableFileName = fileName;
 
-            group.AddButton("Update Setting File", () =>
+                    Debug.Log("TraomScheduler Before Deinit");
+                    TimeTableManager.Deinit();
+                    Debug.Log("TraomScheduler Before Init After Deinit");
+                    TimeTableManager.Init();
+                }
+                else
+                {
+                    //TODO 将来的にはエラーメッセージをだしたい
+                }
+            });
+            group.AddSpace(5);
+
+            Debug.Log("Reflect the latest routes in the timetable.");
+            group.AddButton("Reflect the latest routes in the timetable.", () =>
             {
-
-                //string file = Path.Combine(DataLocation.modsPath, @"TrainScheduler\TimeTables_Template.xml");
-                string file = @"TimeTables.xml";
-                TimeTableManager.UpdateTimeTableFile(file);
+                var fileName = timetableFilePath.text;
+                if (!string.IsNullOrEmpty(fileName) && fileName.EndsWith(".xml"))
+                {
+                    TrainSchedulerSettings.CurrentSaveRecord.TimetableFileName = fileName;
+                    string newPath = Path.Combine(TrainSchedulerSettings.CurrentSaveRecord.TimetablePath, TrainSchedulerSettings.CurrentSaveRecord.TimetableFileName);
+                    TimeTableManager.UpdateTimeTableFile(newPath);
+                }
+                else
+                {
+                    //TODO 将来的にはエラーメッセージをだしたい
+                }
             });
 
-            group.AddButton("Create Template", () =>
-            {
+            group.AddSpace(5);
 
-                //string file = Path.Combine(DataLocation.modsPath, @"TrainScheduler\TimeTables_Template.xml");
-                string file = @"TimeTables_Template.xml";
-                TimeTableManager.CreateTemplate(file);
-            });
+
         }
     }
 

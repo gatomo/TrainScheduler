@@ -21,33 +21,23 @@ Improved Public Transport 2
 2. コンテンツマネージャーからMODを有効化します  
 TrainScheduler 0.x.x
 
-3. 時刻表を設定したいマップを読み込みます  
+3. [初回のみ]マップを読み込むと以下のフォルダに時刻表が生成されます。 
+　フォルダ　[SteamLibraryのインストールフォルダ]\steamapps\common\Cities_Skylines
+  ファイル名　TimeTables.xml
 
-4. オプションより TrainSchedulerを選択し、Create Templateを押下します  
-以下の設定ファイルが作成されます。
-ファイルの場所  
-　C:\Users\\[ユーザー名]\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\TrainScheduler\TimeTable_Template.xml  
-マップ内の路線IDとそれぞれの駅のインデックスが出力されているはずです。  
-XML内の構造はこのような形です。  
-　TimeTableData  
-　┗Lines  
-　　┗Line　←路線ID、路線名、駅数、交通タイプ、モード  
-　　　┗Stops  
-　　　　┗Stop　←停車番号（０からスタート）、駅舎ID、駅名、次の駅舎ID、次の駅名、モード、インターバル  
-　　　　　┗Departures  
-　　　　　　┗Departure　←出発時刻  
+4. [初回以外で新しいマップの時刻表を作りたい場合]
+　オプションに画面のテキストボックスTimetable fileに新しいファイル名を入力して「Reflect the latest routes in the timetable」ボタンを押下してください。
 
-5. 出発時刻を設定します  
-以下のようにHHmm形式で入力してください。その他詳細は 変更できるオプション をご確認ください。  
-　\<Departure\>0002\</Departure\>　←00時02分  
-複数設定する場合はDepartureタグを追加し、以下のようにしてください。  
-　\<Departure\>0002\</Departure\>  
-　\<Departure\>2352\</Departure\>
+5. Webで提供するエディタを利用して出発時刻を設定します  
+  https://gatomo.github.io/TrainSchedulerEditor/  
+  利用方法は有志のかたがこちらの動画で解説してくださっています。  
+  　https://youtu.be/RjcQm8UMKLs?t=230  
 
-7. TimeTables_Template.xmlをTimeTables.xmlにリネームします  
-時刻表MODはTimeTables.xmlのみを時刻表として認識します。  
+6. 編集が終わったら時刻表ファイルをダウンロードします  
+    このとき、3で示したフォルダに配置してください。
+    [SteamLibraryのインストールフォルダ]\steamapps\common\Cities_Skylines
 
-8. ゲームのオプション画面より、Reload Timetableボタンを押下します  
+7. ゲームのオプション画面より、Reload Timetableボタンを押下します  
 これにて時刻表の設定は完了です。ゲームをお楽しみください。
 
 ## 変更できるオプション
@@ -74,9 +64,9 @@ XML内の構造はこのような形です。
         1. Indivisually: 全ての発車時刻を個別に指定します。手間はかかりますが、細かい調整が可能。  
         1. IntervalTime: 間隔(分)で発車時刻を指定します。後続のIntervalオプションとEndオプションの設定必須。 
     1. Interval: 発車間隔を正の整数で指定します。Stopオプション内のModeがIntervalTimeの場合のみ有効です。ModeがIndivisuallyの場合でも整数を設定しておいてください。
-    1. End: ModeがIntervalTimeの場合の終電時間を数字4桁で設定します。使用しない場合は0000を設定してください。
+    1. End: ModeがIntervalTimeの場合の終電時間を数字4桁で設定します。最大値は2359。使用しない場合は0000を設定してください。  
 
-例）IntervalTimeで06:00始発 10分間隔 終電23:00の場合は以下のように設定する  
+例）IntervalTimeで06:00始発 10分間隔 終電23:00の場合は以下のように設定する。  
         \<Stop StopNumber="0" Mode="IntervalTime" Interval="10" End="2300">  
           \<Departures>  
             \<Departure>0600\</Departure>
@@ -88,14 +78,18 @@ XML内の構造はこのような形です。
             \<Departure>0010\</Departure>  
             \<Departure>0020\</Departure>  
             \<Departure>0030\</Departure>  
+最大値は2359です。  
+
 
 ## 路線を追加した / 削除した場合
-使い方 5～8を再度実行しなおしてください。既存路線は設定済みの時刻表データをコピーすると楽になります。  
+　オプションに画面のテキストボックスTimetable fileに現在利用している時刻表ファイル名を入力して「Reflect the latest routes in the timetable」ボタンを押下してください。
+  ゲーム内で追加削除した路線と停車場が時刻表ファイルに反映されます。
 
-## 
-
+### 削除した場合の注意点
+1. 削除した路線、削除した停車場の情報は消失します。ファイルのバックアップを取るか、別名で保存するようにしてください。  
+2. 停車場所、番線を変えて停車位置のネットワークIDが変わると注意点1と同様に、その部分の時刻表を消失します。  
+  
 ## 上手く動かない場合  
-* 旧TimeTable Modをインストールしている場合は、削除するか無効状態にしてください
 * 時刻表の確認  
 時刻表は「Reload Timetable」直後 または マップロード直後にログに出力されます。上手く設定できていないと感じる場合はログで、意図した出発時刻になっているかご確認ください。  
 ログの場所は以下の通りです。  
@@ -104,15 +98,14 @@ XML内の構造はこのような形です。
 > === Line[46] has 8 stop(s) ===  
 > Stops[0] Departures: 1408 / 1418 / 1428 / 1438 / 1448 / 1458 / 1508 / 1518 / 1528 / 1538 / 1548 / 1558 / 1608 / 1618 / 1628 / 1638 / 1648 / 1703 / 
 
-## 注意  
-* 本MODをWorkshopに公開しないでください
-* 不具合報告などはDiscordにて
-
 ## 制限事項  
 * ゲーム内から時刻表を設定できない（今後対応したい）
 
-
 ## Change Log
+### [2.2.4] 2023-03-15
+- Station TrackにImproved Transport Managerで設定した駅名をテンプレートと時刻表に出力できるようになりました
+- オプションに時刻表のアップデート機能を追加しました。これにより、駅名を更新したり、停車場の追加/削除、路線の追加削除をした際のマージ作業が楽になります。持ち越せる設定はEnabled、UseDefaultTimeTable、Mode、Interval、End、Departuresです。LineIDとStopのIdが同一であれば、設定値を引き継ぎます。
+- Timetable.xml以外のファイル名に対応しました。オプション画面より好みの時刻表ファイルを指定、Reloadすることで、好みの時刻表を呼び出すことができます。  
 ### [2.2.3] 2023-03-15
 - Station Trackを利用した際に駅舎Id、次駅Idが0になる場合があり正常に制御されない問題に対処するため、時刻表ファイルに出力されるこれらの値をネットワーク番号に変更しました。これにより全てのマップで時刻表の再設定が必要になります。
 ### [2.2.2] 2023-03-15

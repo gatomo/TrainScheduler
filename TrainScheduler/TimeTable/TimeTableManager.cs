@@ -53,7 +53,11 @@ namespace TrainScheduler.TimeTable
             {
                 // TODO このあたりの処理を綺麗にしたい
                 //string file = Path.Combine(DataLocation.modsPath, @"TrainScheduler\TimeTables.xml");
-                string file = @"TimeTables.xml";
+
+                string file = TrainSchedulerSettings.CurrentSaveRecord.TimetableFileName;
+
+                //string file = @"TimeTables.xml";
+
                 //if (!File.Exists(file))
                 //{
                 //    file = Path.Combine(DataLocation.modsPath, @"TimeTables.xml");
@@ -214,11 +218,6 @@ namespace TrainScheduler.TimeTable
                 var nextNode = Utility.GetNextStationNodeId(ref vehicleData, vehicleId).ToString();
                 var index = lineData.Stops.FindIndex(item => item.NextId == nextNode);
 
-                //string nextStationBuilding = Utility.GetNextStationBuildinIdByVehicle(ref vehicleData, vehicleId).ToString(); 
-                //string currentStationBuilding = Utility.GetCurrentStationBuildingIdByVehicle(ref vehicleData, vehicleId).ToString();
-
-                //var index = lineData.Stops.FindIndex(item => item.Id == currentStationBuilding && item.NextId == nextStationBuilding);
-
                 return lineData.Stops[index].Departures;
             }
             catch (Exception e)
@@ -373,16 +372,11 @@ namespace TrainScheduler.TimeTable
 
         public static void CreateTemplate(string fileName)
         {
+            Debug.Log("Creating Template to: " + fileName);
             try
             {
-                // 既存のファイルは日付をつけてバックアップ
-                if (File.Exists(fileName))
-                {
-                    File.Copy(fileName, fileName + "." + DateTime.Now.ToString("yyyyMMddHHmmss"));
-                }
                 var timeTableData = GetCurrentTimeTableRecord();
-
-                SaveXml(fileName, timeTableData);
+                Utility.SaveXml(fileName, timeTableData, true);
             }
             catch (Exception e)
             {
@@ -392,6 +386,7 @@ namespace TrainScheduler.TimeTable
 
         public static void UpdateTimeTableFile(string fileName)
         {
+            Debug.Log("Updating Timetable to: " + fileName);
             // 基本的な考え方は、Templateの方が最新の駅名や経路を含んでいるはずなので、そこに現状の時刻表をなるべく反映させる
             var timeTableData = GetCurrentTimeTableRecord();
 
@@ -431,32 +426,11 @@ namespace TrainScheduler.TimeTable
 
             try
             {
-                // 既存のファイルは日付をつけてバックアップ
-                if (File.Exists(fileName))
-                {
-                    File.Copy(fileName, fileName + "." + DateTime.Now.ToString("yyyyMMddHHmmss"));
-                }
-
-                SaveXml(fileName, timeTableData);
+                Utility.SaveXml(fileName, timeTableData, true);
             }
             catch (Exception e)
             {
                 throw e;
-            }
-        }
-
-        public static void SaveXml(string fileName, TimeTableRecord tables)
-        {
-            if (File.Exists(fileName))
-            {
-                // ファイルが存在する場合は一旦削除する
-                File.Delete(fileName);
-            }
-
-            using (StreamWriter streamWriter = new StreamWriter(fileName))
-            {
-                // 鉄道情報をXMLに書き出す
-                new XmlSerializer(typeof(TimeTableRecord)).Serialize((TextWriter)streamWriter, tables);
             }
         }
 
