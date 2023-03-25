@@ -53,7 +53,11 @@ namespace TrainScheduler.TimeTable
             {
                 // TODO このあたりの処理を綺麗にしたい
                 //string file = Path.Combine(DataLocation.modsPath, @"TrainScheduler\TimeTables.xml");
-                string file = @"TimeTables.xml";
+
+                string file = TrainSchedulerSettings.CurrentSaveRecord.TimetableFileName;
+
+                //string file = @"TimeTables.xml";
+
                 //if (!File.Exists(file))
                 //{
                 //    file = Path.Combine(DataLocation.modsPath, @"TimeTables.xml");
@@ -214,11 +218,6 @@ namespace TrainScheduler.TimeTable
                 var nextNode = Utility.GetNextStationNodeId(ref vehicleData, vehicleId).ToString();
                 var index = lineData.Stops.FindIndex(item => item.NextId == nextNode);
 
-                //string nextStationBuilding = Utility.GetNextStationBuildinIdByVehicle(ref vehicleData, vehicleId).ToString(); 
-                //string currentStationBuilding = Utility.GetCurrentStationBuildingIdByVehicle(ref vehicleData, vehicleId).ToString();
-
-                //var index = lineData.Stops.FindIndex(item => item.Id == currentStationBuilding && item.NextId == nextStationBuilding);
-
                 return lineData.Stops[index].Departures;
             }
             catch (Exception e)
@@ -242,7 +241,15 @@ namespace TrainScheduler.TimeTable
             }
         }
 
-        public static void CreateTemplate(string fileName)
+        /// <summary>
+        /// 最新の時刻表テンプレートのデータを取得する
+        /// 例えば、駅名や経路変更をした場合に用いる。
+        /// ■更新するデータ
+        /// 駅名
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        public static TimeTableRecord GetCurrentTimeTableRecord(bool update = false)
         {
             try
             {
@@ -261,35 +268,19 @@ namespace TrainScheduler.TimeTable
                     // 公共交通の種別を判定（今のところは電車のみ）
                     switch (lineInfo.Info.GetSubService())
                     {
-                        //case ItemClass.SubService.PublicTransportBus:
-                        //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportBus);
-                        //    break;
                         //case ItemClass.SubService.PublicTransportMetro:
                         //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportMetro);
                         //    break;
                         case ItemClass.SubService.PublicTransportTrain:
                             transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportTrain);
                             break;
-                        //case ItemClass.SubService.PublicTransportShip:
-                        //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportShip);
-                        //    break;
-                        //case ItemClass.SubService.PublicTransportPlane:
-                        //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportPlane);
-                        //    break;
-                        //case ItemClass.SubService.PublicTransportTram:
-                        //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportTram);
-                        //    break;
-                        //case ItemClass.SubService.PublicTransportMonorail:
-                        //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportMonorail);
-                        //    break;
-                        //case ItemClass.SubService.PublicTransportCableCar:
-                        //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportCableCar);
-                        //    break;
-                        //case ItemClass.SubService.PublicTransportTrolleybus:
-                        //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportTrolleybus);
-                        //    break;
+                            //case ItemClass.SubService.PublicTransportTram:
+                            //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportTram);
+                            //    break;
+                            //case ItemClass.SubService.PublicTransportMonorail:
+                            //    transportType = Enum.GetName(typeof(ItemClass.SubService), ItemClass.SubService.PublicTransportMonorail);
+                            //    break;
                     }
-                    
 
                     // 指定した公共交通であればXMLに書き出す
                     // データが壊れて停車場がない公共交通期間もあるため、その場合はテンプレートに出さない
@@ -312,12 +303,40 @@ namespace TrainScheduler.TimeTable
                         for (int stopIndex = 0; stopIndex < lineInfo.CountStops((ushort)lineIndex); stopIndex++)
                         {
                             // stopIndex番目の駅を取得する
-                            ushort currentStationBuilding = Utility.GetNearestStationBuildingIdByNode(stopNetId);
-                            string currentStationName = Utility.GetBuildingName(currentStationBuilding);
+                            string currentStationName = InstanceManager.instance.GetName(new InstanceID { NetNode = stopNetId });
+                            if (string.IsNullOrEmpty(currentStationName))
+                            {
+                                ushort currentStationBuilding = Utility.GetNearestStationBuildingIdByNode(stopNetId);
+                                currentStationName = Utility.GetBuildingName(currentStationBuilding);
+                            }
+                            if (string.IsNullOrEmpty(currentStationName))
+                            {
+                                currentStationName = NetManager.instance.GetSegmentName(stopNetId);
+                            }
+                            if (string.IsNullOrEmpty(currentStationName))
+                            {
+                                ref NetNode currentNode = ref NetManager.instance.m_nodes.m_buffer[stopNetId];
+                                ref NetLane currentLane = ref NetManager.instance.m_lanes.m_buffer[currentNode.m_lane];
+                                currentStationName = NetManager.instance.GetSegmentName(currentLane.m_segment);
+                            }
 
                             var nextNetId = TransportLine.GetNextStop(stopNetId);
-                            ushort nextStationBuilding = Utility.GetNearestStationBuildingIdByNode(nextNetId);
-                            string nextStationName = Utility.GetBuildingName(nextStationBuilding);
+                            string nextStationName = InstanceManager.instance.GetName(new InstanceID { NetNode = nextNetId });
+                            if (string.IsNullOrEmpty(nextStationName))
+                            {
+                                ushort nextStationBuilding = Utility.GetNearestStationBuildingIdByNode(nextNetId);
+                                nextStationName = Utility.GetBuildingName(nextStationBuilding);
+                            }
+                            if (string.IsNullOrEmpty(nextStationName))
+                            {
+                                nextStationName = NetManager.instance.GetSegmentName(nextNetId);
+                            }
+                            if (string.IsNullOrEmpty(nextStationName))
+                            {
+                                ref NetNode nextNode = ref NetManager.instance.m_nodes.m_buffer[nextNetId];
+                                ref NetLane nextLane = ref NetManager.instance.m_lanes.m_buffer[nextNode.m_lane];
+                                nextStationName = NetManager.instance.GetSegmentName(nextLane.m_segment);
+                            }
 
                             line.Stops.Add(new StopRecord
                             {
@@ -342,13 +361,8 @@ namespace TrainScheduler.TimeTable
                         timeTableData.Lines.Add(line);
                     }
                 }
-                // 既存のファイルは日付をつけてバックアップ
-                if (File.Exists(fileName))
-                {
-                    File.Copy(fileName, fileName + "." + DateTime.Now.ToString("yyyyMMddHHmmss"));
-                }
 
-                SaveXml(fileName, timeTableData);
+                return timeTableData;
             }
             catch (Exception e)
             {
@@ -356,18 +370,67 @@ namespace TrainScheduler.TimeTable
             }
         }
 
-        public static void SaveXml(string fileName, TimeTableRecord tables)
+        public static void CreateTemplate(string fileName)
         {
-            if (File.Exists(fileName))
+            Debug.Log("Creating Template to: " + fileName);
+            try
             {
-                // ファイルが存在する場合は一旦削除する
-                File.Delete(fileName);
+                var timeTableData = GetCurrentTimeTableRecord();
+                Utility.SaveXml(fileName, timeTableData, true);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static void UpdateTimeTableFile(string fileName)
+        {
+            Debug.Log("Updating Timetable to: " + fileName);
+            // 基本的な考え方は、Templateの方が最新の駅名や経路を含んでいるはずなので、そこに現状の時刻表をなるべく反映させる
+            var timeTableData = GetCurrentTimeTableRecord();
+
+            foreach (var line in timeTableData.Lines)
+            {
+                var ttLine = TimeTable.FirstOrDefault(e => e.LineID == line.LineID);
+
+                // プレイ中に路線が追加されたパターンはもともとの時刻表にデータがないためエラー回避のためスキップ
+                if (ttLine == null) continue;
+
+                line.Enabled = ttLine.Enabled;
+                line.UseDefaultTimeTable = ttLine.UseDefaultTimeTable;
+                line.Mode = ttLine.Mode;
+
+                foreach (var stop in line.Stops)
+                {
+                    var ttStop = ttLine.Stops.FirstOrDefault(e => e.Id == stop.Id);
+
+                    // プレイ中に停車場が追加されたパターンはもともとの時刻表にデータがないためエラー回避のためスキップ
+                    if (ttStop == null) continue;
+
+                    stop.Enabled = ttStop.Enabled;
+                    stop.UseDefaultTimeTable = ttStop.UseDefaultTimeTable;
+                    stop.Mode = ttStop.Mode;
+                    stop.Interval = ttStop.Interval;
+                    stop.End = ttStop.End;
+                    if (stop.Mode == "IntervalTime" && ttStop.Departures.Count > 0)
+                    {
+                        stop.Departures = new List<string>{ ttStop.Departures[0] };
+                    }
+                    else
+                    {
+                        stop.Departures = ttStop.Departures;
+                    }
+                }
             }
 
-            using (StreamWriter streamWriter = new StreamWriter(fileName))
+            try
             {
-                // 鉄道情報をXMLに書き出す
-                new XmlSerializer(typeof(TimeTableRecord)).Serialize((TextWriter)streamWriter, tables);
+                Utility.SaveXml(fileName, timeTableData, true);
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
